@@ -53,6 +53,9 @@ jobs:
     permissions: write-all
     needs: [Linux, Windows]
     steps:
+      - name: List files before downloading
+        run: ls -la
+
       - name: Download Linux Artifact
         uses: actions/download-artifact@v3
         with:
