@@ -23,7 +23,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: linux-artifact
-          path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb
+          path: ./helloworld-1.0.${{ github.run_number }}-Linux.deb
   Windows:
     runs-on: windows-latest
     permissions: write-all
@@ -47,15 +47,12 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: windows-artifact
-          path: ./helloworld-0.0.${{ github.run_number }}-Windows.exe
+          path: ./helloworld-1.0.${{ github.run_number }}-Windows.exe
   Release:
     runs-on: ubuntu-latest
     permissions: write-all
     needs: [Linux, Windows]
     steps:
-      - name: List files before downloading
-        run: ls -la
-
       - name: Download Linux Artifact
         uses: actions/download-artifact@v3
         with:
@@ -80,13 +77,13 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb
-          asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb
+          asset_path: ./helloworld-1.0.${{ github.run_number }}-Linux.deb
+          asset_name: helloworld-1.0.${{ github.run_number }}-Linux.deb
           asset_content_type: application/vnd.debian.binary-package
       - name: Upload Windows Asset
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./helloworld-0.0.${{ github.run_number }}-Windows.exe
-          asset_name: helloworld-0.0.${{ github.run_number }}-Windows.exe
+          asset_path: ./helloworld-1.0.${{ github.run_number }}-Windows.exe
+          asset_name: helloworld-1.0.${{ github.run_number }}-Windows.exe
           asset_content_type: application/vnd.microsoft.portable-executable
