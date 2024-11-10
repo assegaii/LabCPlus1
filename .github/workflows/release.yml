@@ -64,7 +64,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ needs.Linux.outputs.upload_url }}
           asset_path: ./helloworld-0.0.${{ github.run_number }}-Windows.exe
           asset_name: helloworld-0.0.${{ github.run_number }}-Windows.exe
           asset_content_type: application/vnd.microsoft.portable-executable
