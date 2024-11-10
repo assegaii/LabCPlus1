@@ -19,26 +19,11 @@ jobs:
       - run: cmake --build .
       - run: cmake --build . --target test
       - run: cmake --build . --target package
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v3
         with:
-          tag_name: ${{ github.run_number }}
-          release_name: v 1.0.${{ github.run_number }}
-          draft: false
-          prerelease: false
-      - name: Upload Release Asset
-        id: upload-release-deb
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb
-          asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb
-          asset_content_type: application/vnd.debian.binary-package
+          name: linux-artifact
+          path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb
   Windows:
     runs-on: windows-latest
     permissions: write-all
@@ -58,13 +43,47 @@ jobs:
       - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -D CMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake -D CMAKE_CXX_COMPILER=g++
       - run: cmake --build .
       - run: cmake --build . --target package
-      - name: Upload Release Asset
-        id: upload-release-win
-        uses: actions/upload-release-asset@v1
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-artifact
+          path: ./helloworld-0.0.${{ github.run_number }}-Windows.exe
+  Release:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: [Linux, Windows]
+    steps:
+      - name: Download Linux Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: linux-artifact
+          path: ./
+      - name: Download Windows Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: windows-artifact
+          path: ./
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.Linux.outputs.upload_url }}
+          tag_name: ${{ github.run_number }}
+          release_name: v1.0.${{ github.run_number }}
+          draft: false
+          prerelease: false
+      - name: Upload Linux Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb
+          asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb
+          asset_content_type: application/vnd.debian.binary-package
+      - name: Upload Windows Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./helloworld-0.0.${{ github.run_number }}-Windows.exe
           asset_name: helloworld-0.0.${{ github.run_number }}-Windows.exe
           asset_content_type: application/vnd.microsoft.portable-executable
