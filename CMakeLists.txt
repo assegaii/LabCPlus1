@@ -61,7 +61,6 @@ install(TARGETS helloworld_cli RUNTIME DESTINATION bin)
 
 if(MSVC)
     set(CPACK_GENERATOR NSIS)
-    set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/images\\\\icon.img")
 else()
     set(CPACK_GENERATOR DEB)
 endif()
