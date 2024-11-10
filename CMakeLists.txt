@@ -61,6 +61,7 @@ install(TARGETS helloworld_cli RUNTIME DESTINATION bin)
 
 if(MSVC)
     set(CPACK_GENERATOR NSIS)
+    set(CPACK_PACKAGE_FILE_NAME "helloworld-0.0.${PROJECT_VERSION}-Windows")
 else()
     set(CPACK_GENERATOR DEB)
 endif()
